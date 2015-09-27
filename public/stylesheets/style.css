@@ -5,172 +5,167 @@ html, body {
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
 }
 
 .stamp {
-  position: absolute;
-  top: 30px; left: 0px;
-  border: 0px solid #888888;
-  z-index: -999;
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    border: 0px solid #888888;
+    z-index: -999;
 }
 
 .paint {
-  position: absolute;
-  top: 30px; left: 0px;
-  border: 0px solid #888888;
-  z-index: -998;
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    border: 0px solid #888888;
+    z-index: -998;
 }
 
 .mouse {
-  position: absolute;
-  top: 30px; left: 0px;
-  border: 0px solid #888888;
-  z-index: -996;
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    border: 0px solid #888888;
+    z-index: -996;
 }
 
 .chara {
-  position: absolute;
-  top: 30px; left: 0px;
-  border: 0px solid #888888;
-  z-index: -997;
+    position: absolute;
+    top: 30px;
+    left: 0px;
+    border: 0px solid #888888;
+    z-index: -997;
 }
-
 
 #tools {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
-  line-height: 1;
-  margin: 0;
-  padding: 0;
-  background: #fefefe;
-  border-bottom:1px solid #ff7000;
-  /*background: rgba(0,0,0,0.7);
-  background: -webkit-gradient(
-  linear,
-  left top, left bottom,
-  #888, #666
-  );
-  background: -moz-linear-gradient(top, #888, #666);
-  box-shadow: 0 0 1px rgba(0,0,0,0.5);
-  */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    background: #fefefe;
+    border-bottom: 1px solid #ff7000;
 }
 
-#tools button{
-	cursor: pointer;
-	padding: 5px 10px;
-	float: left;
-	border: solid 0px #ff7000;
-	margin-left: 1px;
-	margin-top:2px;
-	border-radius: 3px;
-	background: #ee6000;
-	color:#ffffff;
+#tools button {
+    cursor: pointer;
+    padding: 5px 10px;
+    float: left;
+    border: solid 0px #ff7000;
+    margin-left: 1px;
+    margin-top: 2px;
+    border-radius: 3px;
+    background: #ee6000;
+    color: #ffffff;
 }
 
-#tools button:hover{
-	background: #FF8010;
+#tools button:hover {
+    background: #FF8010;
 }
 
 #brushsize {
-  float:left;
-  display: inline-block;
-  vertical-align: middle;
-  width:100px;
-  height:8px;
-  margin-top:10px;
-  margin-left:15px;
-  margin-right:15px;
-  z-index:2;
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 100px;
+    height: 8px;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
+    z-index: 2;
 }
 
-/*#bs {
-  display: inline-block;
-  vertical-align: middle;
-}*/
 #cs {
-	margin-top:2px;
-	float:left;
-	width:60px;
-	height:22px;
-	border: 1px solid #FF7000;
-	border-radius: 3px;
+    margin-top: 2px;
+    float: left;
+    width: 60px;
+    height: 22px;
+    border: 1px solid #FF7000;
+    border-radius: 3px;
 }
 
 #brushgroup {
-	display: inline-block;
-    /*vertical-align: middle;*/
-	float:left;
-	margin-top:2px;
+    display: inline-block;
+    float: left;
+    margin-top: 2px;
 }
 
 #brushgroup input {
-	display:none;
+    display: none;
 }
 
-#brushgroup label{
-	font-size:10px;
-	cursor: pointer;
-	padding: 7px 10px;
-	float: left;
-	border: solid 1px #ff7000;
-	margin-left: 2px;
-	background: #fefefe;
-	border-radius:3px;
-	color:#666666;
+#brushgroup label {
+    font-size: 10px;
+    cursor: pointer;
+    padding: 7px 10px;
+    float: left;
+    border: solid 1px #ff7000;
+    margin-left: 2px;
+    background: #fefefe;
+    border-radius: 3px;
+    color: #666666;
 }
 
-#brushgroup :hover{
-	color:#f05000;
+#brushgroup :hover {
+    color: #f05000;
 }
 
 #brushgroup input:checked + label {
     color: #fff;
-	background: #ff7000;
+    background: #ff7000;
 }
 
 #charaswitch {
-	margin-top:2px;
+    margin-top: 2px;
 }
 
 #charaswitch input {
-	display:none;
+    display: none;
 }
 
-#charaswitch label{
-	font-size:10px;
-	cursor: pointer;
-	padding: 7px 10px;
-	float: left;
-	border: solid 1px #ff7000;
-	margin-left: 2px;
-	background: #fefefe;
-	border-radius:3px;
-	color:#666666;
+#charaswitch label {
+    font-size: 10px;
+    cursor: pointer;
+    padding: 7px 10px;
+    float: left;
+    border: solid 1px #ff7000;
+    margin-left: 2px;
+    background: #fefefe;
+    border-radius: 3px;
+    color: #666666;
 }
 
-#charaswitch :hover{
-	color:#f05000;
+#charaswitch :hover {
+    color: #f05000;
 }
 
 #charaswitch input:checked + label {
     color: #fff;
-	background: #ff7000;
+    background: #ff7000;
 }
 
-#thumb{
-	width:128px;
-	height:54px;
+#thumb {
+    width: 128px;
+    height: 54px;
 }
 
-#mokuji ul{
-	list-style:none;
+#mokuji ul {
+    list-style: none;
 }
-#mokuji li{
-	float:left;
-	margin-right:5px;
-	display: inline-block;
+
+#mokuji li {
+    float: left;
+    margin-right: 5px;
+    display: inline-block;
+}
+
+.thumbnail {
+    margin: 10px;
+    width: 200px;
 }
