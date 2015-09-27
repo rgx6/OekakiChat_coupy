@@ -1,36 +1,35 @@
-canvas.stamp(id='p0', width='640', height='270')
-canvas.paint(id='p1', width='640', height='270')
-canvas.mouse(id='p2', width='640', height='270')
-canvas.chara(id='p3', width='640', height='270')
+extends layout
+block body
+  canvas.stamp(id='p0', width='640', height='270')
+  canvas.paint(id='p1', width='640', height='270')
+  canvas.mouse(id='p2', width='640', height='270')
+  canvas.chara(id='p3', width='640', height='270')
 
-div#tools
-  button#clear clear
-  button#save save
-  button#log log
+  div#tools
+    button#clear clear
+    button#save save
+    button#log log
 
-  div(id='brushsize')
-  
-  input(id='cs',type='text',value='#000000',style='color:#FFFFFF;background-color:#000000')
+    div(id='brushsize')
 
-  
-  div(id='brushgroup')
-    input(id='brush1',type='radio',name="bg",value="pen",checked)
-    label(for='brush1') ペン
-    input(id='brush2',type='radio',name="bg",value="eraser")
-    label(for='brush2') 消しゴム
-    input(id='brush3',type='radio',name="bg",value="spuit")
-    label(for='brush3') スポイト
-    input(id='brush4',type='radio',name="bg",value="gnh")
-    label(for='brush4') 我那覇響
-  //
-    div(id='charaswitch')
-      input(id='switch1',type='checkbox',value='ON')
-      label(for='switch1') プレイヤー
-  //
-    form(id='bs')
-      select#mytextarea(id='select')
-        option#pen(value='pen') ペン
-        option#eraser(value='eraser') 消しゴム
-        option#gnh(value='gnh') 我那覇響
-      
-  
+    input(id='cs',type='text',value='#000000',style='color:#FFFFFF;background-color:#000000')
+
+    div(id='brushgroup')
+      input(id='brush1',type='radio',name="bg",value="pen",checked)
+      label(for='brush1') ペン
+      input(id='brush2',type='radio',name="bg",value="eraser")
+      label(for='brush2') 消しゴム
+      input(id='brush3',type='radio',name="bg",value="spuit")
+      label(for='brush3') スポイト
+      input(id='brush4',type='radio',name="bg",value="gnh")
+      label(for='brush4') 我那覇響
+    //
+      div(id='charaswitch')
+        input(id='switch1',type='checkbox',value='ON')
+        label(for='switch1') プレイヤー
+    //
+      form(id='bs')
+        select#mytextarea(id='select')
+          option#pen(value='pen') ペン
+          option#eraser(value='eraser') 消しゴム
+          option#gnh(value='gnh') 我那覇響
