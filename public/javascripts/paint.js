@@ -438,61 +438,62 @@ jQuery(document).ready(function () {
         mousectx.clearRect(0, 0, mousecvs.width, mousecvs.height);
     };
 
-    var onKeyDown = function(event){
-        if(event.shiftKey){
-            if((!shiftdown)&&positioning) displayShiftLine();
+    var onKeyDown = function (event) {
+        if (event.shiftKey) {
+            if(!shiftdown && positioning) displayShiftLine();
         }
+
         shiftdown = event.shiftKey;
-        //keydown(event.keyCode);
+
         return false;
     };
 
-    var onKeyUp = function(event){
-        if(shiftdown && positioning){
+    var onKeyUp = function (event) {
+        if (shiftdown && positioning) {
             mousectx.clearRect(0, 0, mousecvs.width, mousecvs.height);
         }
+
         shiftdown = event.shiftKey;
-        //keyup(event.keyCode);
+
         return false;
     };
 
-    var onSaveClick = function(){
+    var onSaveClick = function () {
         var date = new Date();
         var points = {
-            s: 'save'
-            //, id: maincvs.id
-            //, rid: randomID
-            , url: maincvs.toDataURL()
-            , time: yyyymmddhhmiss()
+            s:    'save',
+            url:  maincvs.toDataURL(),
+            time: yyyymmddhhmiss()
         };
+
         buffer(points);
+
         var url = maincvs.toDataURL();
-        window.open(url,'data url');
+
+        window.open(url, 'data url');
     };
 
-    var onClearClick = function(){
-        if(clearing){
-            return;
-        }
+    var onClearClick = function () {
+        if (clearing) return;
 
         var date = new Date();
         var points = {
-            s: 'clear'
-            , id: maincvs.id
-            , url: maincvs.toDataURL()
-            , time: yyyymmddhhmiss()
+            s:    'clear',
+            id:   maincvs.id,
+            url:  maincvs.toDataURL(),
+            time: yyyymmddhhmiss()
         };
+
         buffer(points);
         paint(points);
     };
 
-    var onLogClick = function(){
+    var onLogClick = function () {
         window.open('/log/page1.html', null);
     };
 
     //初期化
-    var init = function(){
-
+    var init = function () {
         brushsize = 4;
         mycolor = '#000000';
         brushstyle = 'pen';
