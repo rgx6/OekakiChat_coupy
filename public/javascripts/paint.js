@@ -390,17 +390,23 @@ jQuery(document).ready(function () {
         }
     };
 
-    var onMouseMove = function(event){
-        if(browser.indexOf("IE") != -1 && mouseout){
+    var onMouseMove = function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (browser.indexOf("IE") != -1 && mouseout) {
             return;
         }
 
-        event.stopPropagation();
         positioned = position(event);
         displayCursor(event);
-        if (drawing == true) {
-            if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
-            if(brushstyle=='eraser') drawLine(event,'white');
+
+        if (drawing) {
+            if (brushstyle === 'pen') {
+                drawLine(event, cs.style.backgroundColor);
+            } else if (brushstyle == 'eraser') {
+                drawLine(event, 'white');
+            }
         }
     };
 
