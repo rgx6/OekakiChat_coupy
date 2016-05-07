@@ -2,8 +2,15 @@ var express = require('express');
 var http    = require('http');
 var path    = require('path');
 var fs      = require('fs');
+var log4js  = require('log4js');
 var routes  = require('./routes.js');
 var db      = require('./db.js');
+
+log4js.configure('log4js_configuration.json', { reloadSecs: 60 });
+var appLogger = log4js.getLogger('appLog');
+appLogger.setLevel(log4js.levels.INFO);
+var accessLogger = log4js.getLogger('accessLog');
+accessLogger.setLevel(log4js.levels.INFO);
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -12,6 +19,24 @@ app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+app.use(log4js.connectLogger(accessLogger, {
+    // express 閾値ではなく指定したログレベルで記録される
+    'level': log4js.levels.INFO,
+    // アクセスログを出力する際に無視する拡張子
+    'nolog': [ '\\.css', '\\.js', '\\.png', '\\.gif' ],
+    // アクセスログのフォーマット
+    'format': JSON.stringify({
+        'remote-addr':    ':remote-addr',
+        'method':         ':method',
+        'url':            ':url',
+        'status':         ':status',
+        'http-version':   ':http-version',
+        'content-length': ':content-length',
+        'referrer':       ':referrer',
+        'user-agent':     ':user-agent',
+        'response-time':  ':response-time',
+    })
+}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -29,14 +54,14 @@ routes.set(app);
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function () {
-    console.log('Express server listening on port ' + app.get('port'));
+    appLogger.info('Express server listening on port ' + app.get('port'));
 });
 
 // 'log lever' : 0 error  1 warn  2 info  3 debug / log: false
 var io = require('socket.io').listen(server, { 'log level': 2 });
 
 process.on('uncaughtException', function (err) {
-    console.log('uncaughtException => ' + err);
+    appLogger.error('uncaughtException => ' + err);
 });
 
 
@@ -75,7 +100,7 @@ var paint = io.of('/paint').on('connection', function (socket) {
             var path = __dirname + '/public/images/log/' + fileName + '.png';
             fs.writeFile(path, buf, function (err) {
                 if (err) {
-                    console.log(err);
+                    appLogger.error(err);
                     return;
                 }
 
@@ -83,7 +108,7 @@ var paint = io.of('/paint').on('connection', function (socket) {
                 log.fileName = fileName;
                 log.save(function (err, doc) {
                     if (err) {
-                        console.log(err);
+                        appLogger.error(err);
                         return;
                     }
                 });
