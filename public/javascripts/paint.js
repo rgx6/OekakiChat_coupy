@@ -419,6 +419,7 @@ jQuery(document).ready(function () {
         event.stopPropagation();
         mouseout=true;
         if (drawing == true) {
+            drawing = false;
             positioning = position(event);
             if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
             if(brushstyle=='eraser') drawLine(event,'white');
