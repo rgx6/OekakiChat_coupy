@@ -250,7 +250,7 @@ jQuery(document).ready(function () {
                 mousectx.fill();
 
                 // 直線表示
-                if (shiftdown) drawShiftLine();
+                if (shiftdown) displayShiftLine();
                 break;
 
             case 'eraser':
@@ -263,7 +263,7 @@ jQuery(document).ready(function () {
                 mousectx.fill();
 
                 // 直線表示
-                if (shiftdown) drawShiftLine();
+                if (shiftdown) displayShiftLine();
                 break;
 
             case 'gnh':
@@ -307,39 +307,43 @@ jQuery(document).ready(function () {
     };
 
     // shiftした時のプレビュー表示
-    var displayShiftLine = function(){
-        if(!positioning){
-            return;
-        }
+    var displayShiftLine = function () {
+        if (!positioning) return;
 
-        if (brushstyle != 'pen' && brushstyle != 'eraser'){
-            return;
-        }
+        if (brushstyle != 'pen' && brushstyle != 'eraser') return;
 
         mousectx.lineWidth = brushsize;
-        if(brushstyle == 'pen') mousectx.strokeStyle = getSelectedColor();
-        else if(brushstyle == 'eraser') mousectx.strokeStyle = 'white';
+        if (brushstyle == 'pen') {
+            mousectx.strokeStyle = getSelectedColor();
+        } else if (brushstyle == 'eraser') {
+            mousectx.strokeStyle = 'white';
+        }
         mousectx.beginPath();
         mousectx.moveTo(positioned.x, positioned.y);
         mousectx.lineTo(positioning.x, positioning.y);
         mousectx.stroke();
-
     };
 
-    //イベント
-    var onMouseDown = function(event){
+    // イベント
+    var onMouseDown = function (event) {
         event.stopPropagation();
         drawing = true;
 
-        switch(brushstyle){
+        switch (brushstyle) {
             case 'pen':
-                if(shiftdown) drawLine(event,getSelectedColor());
-                else drawArc(event,getSelectedColor());
+                if (shiftdown) {
+                    drawLine(event,getSelectedColor());
+                } else {
+                    drawArc(event,getSelectedColor());
+                }
                 break;
 
             case 'eraser':
-                if(shiftdown) drawLine(event,'white');
-                else drawArc(event,'white');
+                if (shiftdown) {
+                    drawLine(event,'white');
+                } else {
+                    drawArc(event,'white');
+                }
                 break;
 
             case 'gnh':
@@ -347,25 +351,23 @@ jQuery(document).ready(function () {
                 break;
 
             case 'spuit':
-                var imgdata,
-                hex,
-                cs;
-                imgdata = mainctx.createImageData(1,1);
                 positioning = position(event);
-                imgdata = mainctx.getImageData(positioning.x,positioning.y,1,1);
-                hex ='';
+                var imgdata = mainctx.getImageData(positioning.x, positioning.y, 1, 1);
 
-                for(var i=0;i<3;i++) {
+                var hex ='';
+
+                for (var i = 0; i < 3; i++) {
                     hex += toDoubleDigits16(imgdata.data[i].toString(16));
                 }
 
-                cs = jQuery('#cs');
+                var cs = jQuery('#cs');
                 cs.ColorPickerSetColor('#' + hex);
                 cs.css('backgroundColor', '#' + hex);
                 cs.val('#' + hex);
-                if(jQuery('.colorpicker_hsb_b').children('input')[0].value<80){
+
+                if (jQuery('.colorpicker_hsb_b').children('input')[0].value < 80) {
                     cs.css('color','#ffffff');
-                }else{
+                } else {
                     cs.css('color','#000000');
                 }
                 break;
@@ -392,35 +394,41 @@ jQuery(document).ready(function () {
         }
     };
 
-    var onMouseUp = function(event){
+    var onMouseUp = function (event) {
         event.stopPropagation();
         drawing = false;
     };
 
-    var onMouseOut = function(event){
+    var onMouseOut = function (event) {
         event.stopPropagation();
         mouseout=true;
         if (drawing == true) {
             drawing = false;
             positioning = position(event);
-            if(brushstyle=='pen') drawLine(event,cs.style.backgroundColor);
-            if(brushstyle=='eraser') drawLine(event,'white');
+            if (brushstyle == 'pen') {
+                drawLine(event,cs.style.backgroundColor);
+            } else if (brushstyle == 'eraser') {
+                drawLine(event,'white');
+            }
         }
         mousectx.clearRect(0, 0, mousecvs.width, mousecvs.height);
     };
 
-    var onMouseOver = function(event){
+    var onMouseOver = function (event) {
         event.stopPropagation();
         mouseout = false;
         if (drawing == true) {
-            if(browser.indexOf("Chrome") != -1){
-                if(Event.isLeftClick(event)){
-                    if(brushstyle=='pen') drawArc(event,cs.style.backgroundColor);
-                    if(brushstyle=='eraser') drawArc(event,'white');
-                }else{
+            if (browser.indexOf("Chrome") != -1) {
+                if (Event.isLeftClick(event)) {
+                    if (brushstyle == 'pen') {
+                        drawArc(event,cs.style.backgroundColor);
+                    } else if (brushstyle == 'eraser') {
+                        drawArc(event,'white');
+                    }
+                } else {
                     drawing = false;
                 }
-            }else{
+            } else {
                 drawing = false;
             }
         }
@@ -429,7 +437,7 @@ jQuery(document).ready(function () {
 
     var onKeyDown = function (event) {
         if (event.shiftKey) {
-            if(!shiftdown && positioning) displayShiftLine();
+            if (!shiftdown && positioning) displayShiftLine();
         }
 
         shiftdown = event.shiftKey;
@@ -452,7 +460,7 @@ jQuery(document).ready(function () {
         var points = {
             s:    'save',
             url:  maincvs.toDataURL(),
-            time: yyyymmddhhmiss()
+            time: yyyymmddhhmiss(),
         };
 
         buffer(points);
@@ -470,7 +478,7 @@ jQuery(document).ready(function () {
             s:    'clear',
             id:   maincvs.id,
             url:  maincvs.toDataURL(),
-            time: yyyymmddhhmiss()
+            time: yyyymmddhhmiss(),
         };
 
         buffer(points);
@@ -481,7 +489,7 @@ jQuery(document).ready(function () {
         window.open('/log/page1.html', null);
     };
 
-    //初期化
+    // 初期化
     var init = function () {
         brushsize = 4;
         mycolor = '#000000';
@@ -500,10 +508,10 @@ jQuery(document).ready(function () {
 
         socket = new io.connect('/paint');
         socket.on('paint points', function(data) {
-            for(var i in data) paint(data[i]);
+            for (var i in data) paint(data[i]);
         });
 
-        imgarr = {'gnh':new Image()};
+        imgarr = { 'gnh': new Image() };
         imgarr['gnh'].src = '/images/hibiki.png';
 
         stampcvs = jQuery('#p0')[0];
@@ -512,7 +520,7 @@ jQuery(document).ready(function () {
         maincvs = jQuery('#p1')[0];
         mainctx = maincvs.getContext('2d');
         mainctx.fillStyle = 'white';
-        mainctx.fillRect(0,0,maincvs.width,maincvs.height);
+        mainctx.fillRect(0, 0, maincvs.width, maincvs.height);
         mainctx.lineWidth = 4;
         mainctx.lineCap = 'round';
         mainctx.fillStyle = 'black';
@@ -522,32 +530,35 @@ jQuery(document).ready(function () {
         mousectx = mousecvs.getContext('2d');
         mousectx.lineCap ='round';
 
-        colorselector= jQuery('#cs')[0];
+        colorselector = jQuery('#cs')[0];
         jQuery('#cs').ColorPicker({
-            color:'#000000',
+            color: '#000000',
             onChange: function (hsb, hex, rgb) {
                 jQuery('#cs').css('backgroundColor', '#' + hex);
                 jQuery('#cs').val('#' + hex);
-                if(hsb.b<80) jQuery('#cs').css('color','#ffffff');
-                else jQuery('#cs').css('color','#000000');
+                if (hsb.b < 80) {
+                    jQuery('#cs').css('color','#ffffff');
+                } else {
+                    jQuery('#cs').css('color','#000000');
+                }
             }
         });
 
         brushselector = jQuery('#brushgroup')[0];
-        brushselector.onchange = function(event){
+        brushselector.onchange = function (event) {
             brushstyle = jQuery("#brushgroup input[name='bg']:checked").val();
         };
 
         jQuery('#brushsize').slider({
-            value:4,
-            min:1,
-            max:20,
-            slide:function(event,ui){
+            value: 4,
+            min:   1,
+            max:   20,
+            slide: function (event, ui) {
                 brushsize = ui.value;
             }
         });
 
-        //イベント登録
+        // イベント登録
         mousecvs.onmousedown = onMouseDown;
         mousecvs.onmousemove = onMouseMove;
         mousecvs.onmouseout = onMouseOut;
@@ -558,27 +569,27 @@ jQuery(document).ready(function () {
         jQuery('#save').click(onSaveClick);
         jQuery('#log').click(onLogClick);
         jQuery('#clear').click(onClearClick);
-
     };
 
     init();
 
-
-
-    function getSelectedColor(){
+    function getSelectedColor () {
         return colorselector.style.backgroundColor;
     };
 
-    //汎用的な関数
-    function position(event){ //マウスの座標なおす
+    // 汎用的な関数
+
+    // マウスの座標なおす
+    function position (event) {
         var rect = event.target.getBoundingClientRect();
         return {
             x: Math.floor(event.clientX - rect.left),
-            y: Math.floor(event.clientY - rect.top)
+            y: Math.floor(event.clientY - rect.top),
         };
     }
 
-    function toDoubleDigits(num){ //2ケタにする
+    // 2ケタにする
+    function toDoubleDigits (num) {
         num += "";
         if (num.length === 1) {
             num = "0" + num;
@@ -586,14 +597,16 @@ jQuery(document).ready(function () {
         return num;
     }
 
-    function toDoubleDigits16(string){ //16進2ケタ
+    // 16進2ケタ
+    function toDoubleDigits16 (string) {
         if (string.length == 1) {
             string = "0" + string;
         }
         return string;
     }
 
-    function yyyymmddhhmiss(){ //日付取得整形
+    // 日付取得整形
+    function yyyymmddhhmiss () {
         var date = new Date();
         var yyyy = date.getFullYear();
         var mm = toDoubleDigits(date.getMonth() + 1);
@@ -603,33 +616,4 @@ jQuery(document).ready(function () {
         var ss = toDoubleDigits(date.getSeconds());
         return yyyy + '-' + mm + '-' + dd + ' ' + hh + '.' + mi + '.' + ss;
     }
-
-    //筆圧
-    /*
-     function getWacomPlugin() {
-     return window.Wacom || document.embeds["wacom-plugin"];
-     }
-
-     function getWacomPressure() {
-     var pressure = getWacomPlugin().pressure;
-     }
-
-     function getPressure() {
-     //筆圧取得
-     var plugin = getWacomPlugin();
-     var pressure=1.0;
-     //if(! typeof plugin === "undefined") pressure = plugin.pressure;
-     if(plugin.pointerType==1) pressure = plugin.pressure;
-     console.log('plugin:'+plugin);
-     console.log('pluginisWacom:'+plugin.isWacom);
-     console.log('plugin.pressure:'+plugin.pressure);
-     console.log('pressure:'+pressure);
-     console.log('TabletModel:'+plugin.TabletModel);
-     console.log('pointertype:'+plugin.pointerType);
-     console.log('type of plugin:'+ typeof plugin);
-
-     return pressure;
-     }
-     */
-
 }, false);
