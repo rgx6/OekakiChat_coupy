@@ -472,9 +472,14 @@ $(document).ready(function () {
 
         browser = navigator.userAgent;
 
+        $.blockUI({
+            message: '<h4>読み込み中</h4>'
+        });
+
         socket = new io.connect('/paint');
-        socket.on('paint points', function(data) {
+        socket.on('paint points', function (data) {
             for (var i in data) paint(data[i]);
+            $.unblockUI();
         });
 
         imgarr = { 'gnh': new Image() };
