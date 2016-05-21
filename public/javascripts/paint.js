@@ -5,7 +5,6 @@ jQuery(document).ready(function () {
     //スタンプ画像リスト
     var imgarr = [];
 
-
     var //描画スタイル
     brushsize,
     mycolor,
@@ -44,26 +43,23 @@ jQuery(document).ready(function () {
 
 
 
-    //溜まったバッファを送信
-    var emit = function(){
-        if(!buffering){
-            return;
-        }
+    // 溜まったバッファを送信
+    var emit = function () {
+        if (!buffering) return;
 
         socket.json.emit('paint points', bufpts);
         bufpts = [];
         buffering = false;
     };
 
-    //画面に描画
-    var paint = function(points) {
-
+    // 画面に描画
+    var paint = function (points) {
         clearing = false;
 
-        var paintLine = function(){
+        var paintLine = function () {
             mainctx.lineWidth = points.w;
             mainctx.strokeStyle = points.c;
-            var kisuu_hosei = points.w % 2 === 0 ? 0 : 0.5; //奇数なら座標0.5マイナス
+            var kisuu_hosei = points.w % 2 === 0 ? 0 : 0.5; // 奇数なら座標0.5マイナス
 
             for (var i = 1; i < points.x.length; i++) {
                 mainctx.beginPath();
@@ -73,14 +69,14 @@ jQuery(document).ready(function () {
             }
         };
 
-        var paintArc = function(){
+        var paintArc = function () {
             mainctx.fillStyle = points.c;
             mainctx.beginPath();
             mainctx.arc(points.x, points.y, points.w / 2, 0, Math.PI * 2, true);
             mainctx.fill();
         };
 
-        var paintStamp = function(){
+        var paintStamp = function () {
             var stampSize,
                 stampPosition,
 
@@ -96,28 +92,25 @@ jQuery(document).ready(function () {
             mainctx.fillStyle = points.c;
 
             stampSize = {
-                x: imgarr[points.img].width * (0.5 + points.w / 10),
-                y: imgarr[points.img].height * (0.5 + points.w / 10)
+                x: Math.round(imgarr[points.img].width * (0.5 + points.w / 10)),
+                y: Math.round(imgarr[points.img].height * (0.5 + points.w / 10)),
             };
 
             stampPosition = {
-                x: points.x - stampSize.x / 2,
-                y: points.y - stampSize.y / 2
+                x: Math.round(points.x - stampSize.x / 2),
+                y: Math.round(points.y - stampSize.y / 2),
             };
 
             stampctx.clearRect(0, 0, stampcvs.width, stampcvs.height);
-            stampctx.drawImage(imgarr[points.img], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y); //スタンプ用キャンバスに描画
-
-            stampData = stampctx.createImageData(stampSize.x, stampSize.y);
+            stampctx.drawImage(imgarr[points.img], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
             stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
-            maincvsData = mainctx.createImageData(stampSize.x, stampSize.y);
             maincvsData = mainctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
             stamp_r = parseInt(mainctx.fillStyle.substring(1, 3), 16);
             stamp_g = parseInt(mainctx.fillStyle.substring(3, 5), 16);
             stamp_b = parseInt(mainctx.fillStyle.substring(5, 7), 16);
 
-            for (i in stampData.data) {
+            for (var i in stampData.data) {
                 if (i % 4 == 3 && stampData.data[i] > 0) {
                     alpha = stampData.data[i] / 255;
                     maincvsData.data[i - 3] = stamp_r * alpha + maincvsData.data[i - 3] * (1 - alpha);
@@ -129,7 +122,7 @@ jQuery(document).ready(function () {
             mainctx.putImageData(maincvsData, stampPosition.x, stampPosition.y);
         };
 
-        var paintClear = function(){
+        var paintClear = function () {
             clearing = true;
             mainctx.fillStyle = "white";
             mainctx.fillRect(0, 0, maincvs.width, maincvs.height);
@@ -152,12 +145,10 @@ jQuery(document).ready(function () {
                 paintClear();
                 break;
         }
-
     };
 
     //バッファする
     var buffer = function (points) {
-
         if (points.s == 'line') {
             var linepoints = {
                 s: points.s,
@@ -165,12 +156,13 @@ jQuery(document).ready(function () {
                 y: [points.yp, points.y],
                 w: points.w,
                 c: points.c,
-                //id : points.id,
-                //rid : points.rid
             };
 
             if (bufpts.length > 0) {
-                if (bufpts.slice(-1)[0].s == points.s && bufpts.slice(-1)[0].c == points.c && bufpts.slice(-1)[0].w == points.w && bufpts.slice(-1)[0].s == 'line') {
+                if (bufpts.slice(-1)[0].s == points.s &&
+                    bufpts.slice(-1)[0].c == points.c &&
+                    bufpts.slice(-1)[0].w == points.w &&
+                    bufpts.slice(-1)[0].s == 'line') {
                     bufpts[bufpts.length - 1].x.push(points.x);
                     bufpts[bufpts.length - 1].y.push(points.y);
                 } else {
@@ -183,7 +175,7 @@ jQuery(document).ready(function () {
             bufpts.push(points);
         }
 
-        //クリアセーブは即送信・他は0.5秒ごとに送信
+        // クリアセーブは即送信・他は0.5秒ごとに送信
         if (points.s == 'clear' || points.s == 'save') {
             buffering = true;
             emit();
@@ -193,54 +185,45 @@ jQuery(document).ready(function () {
                 emit();
             }, 500);
         }
-
     };
 
-    //各種お絵描き
-    var drawArc = function(event,color) {
+    // 各種お絵描き
+    var drawArc = function (event, color) {
         positioning = position(event);
-        //var pressure = getPressure();
         var points = {
-            s: 'arc'
-            , x: positioning.x
-            , y: positioning.y
-            , w: brushsize /*pressure*/
-            , c: color
-            //, id: maincvs.id
-            //, rid: randomID
+            s: 'arc',
+            x: positioning.x,
+            y: positioning.y,
+            w: brushsize,
+            c: color,
         };
         buffer(points);
         paint(points);
     };
 
-    var drawLine = function(event,color) {
-        //var pressure = getPressure();
+    var drawLine = function (event, color) {
         var positions = position(event);
         var points = {
-            s: 'line'
-            , x: positions.x
-            , y: positions.y
-            , xp: positioning.x
-            , yp: positioning.y
-            , w:  brushsize /*pressure*/
-            , c: color
-            //, id: maincvs.id
-            //, rid: randomID
+            s: 'line',
+            x: positions.x,
+            y: positions.y,
+            xp: positioning.x,
+            yp: positioning.y,
+            w:  brushsize,
+            c: color,
         };
         buffer(points);
         paint({
-            s: points.s
-            , x: [points.xp ,points.x]
-            , y: [points.yp ,points.y]
-            , w:  points.w
-            , c: points.c
-            //, id: points.id
-            //, rid: points.rid
+            s: points.s,
+            x: [points.xp ,points.x],
+            y: [points.yp ,points.y],
+            w: points.w,
+            c: points.c,
         });
         positioning = positions;
     };
 
-    var drawStamp = function(event, img, color) {
+    var drawStamp = function (event, img, color) {
         positioning = position(event);
         var points = {
             s: 'stamp',
@@ -254,20 +237,20 @@ jQuery(document).ready(function () {
         paint(points);
     };
 
-    //カーソル表示
-    var displayCursor = function(event){
+    // カーソル表示
+    var displayCursor = function (event) {
         var positions = position(event);
         mousectx.clearRect(0, 0, mousecvs.width, mousecvs.height);
 
-        switch(brushstyle){
+        switch (brushstyle) {
             case 'pen':
                 mousectx.fillStyle = getSelectedColor();
                 mousectx.beginPath();
                 mousectx.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
                 mousectx.fill();
 
-                //直線表示
-                if(shiftdown) drawShiftLine();
+                // 直線表示
+                if (shiftdown) drawShiftLine();
                 break;
 
             case 'eraser':
@@ -279,8 +262,8 @@ jQuery(document).ready(function () {
                 mousectx.stroke();
                 mousectx.fill();
 
-                //直線表示
-                if(shiftdown) drawShiftLine();
+                // 直線表示
+                if (shiftdown) drawShiftLine();
                 break;
 
             case 'gnh':
@@ -293,23 +276,22 @@ jQuery(document).ready(function () {
 
                 mousectx.fillStyle = getSelectedColor();
                 stampSize = {
-                    x : imgarr['gnh'].width * (0.5 + brushsize / 10),
-                    y : imgarr['gnh'].height * (0.5 + brushsize / 10)
+                    x : Math.round(imgarr['gnh'].width * (0.5 + brushsize / 10)),
+                    y : Math.round(imgarr['gnh'].height * (0.5 + brushsize / 10)),
                 };
                 stampPosition = {
-                    x : positions.x - stampSize.x / 2,
-                    y : positions.y - stampSize.y / 2
+                    x : Math.round(positions.x - stampSize.x / 2),
+                    y : Math.round(positions.y - stampSize.y / 2),
                 };
                 stampctx.clearRect(0, 0, stampcvs.width, stampcvs.height);
-                stampctx.drawImage(imgarr['gnh'], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);//スタンプ用キャンバスに描画
+                stampctx.drawImage(imgarr['gnh'], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
-                stampData = stampctx.createImageData(stampSize.x, stampSize.y);
                 stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
                 stamp_r = parseInt(mousectx.fillStyle.substring(1, 3), 16);
                 stamp_g = parseInt(mousectx.fillStyle.substring(3, 5), 16);
                 stamp_b = parseInt(mousectx.fillStyle.substring(5, 7), 16);
-                for (i in stampData.data) {
+                for (var i in stampData.data) {
                     if (i % 4 == 3 && stampData.data[i] > 0) {
                         stampData.data[i - 3] = stamp_r;
                         stampData.data[i - 2] = stamp_g;
@@ -324,7 +306,7 @@ jQuery(document).ready(function () {
         }
     };
 
-    //shiftした時のプレビュー表示
+    // shiftした時のプレビュー表示
     var displayShiftLine = function(){
         if(!positioning){
             return;
