@@ -1,4 +1,4 @@
-jQuery(document).ready(function () {
+$(document).ready(function () {
 
     //未送信バッファ
     var bufpts = [];
@@ -15,7 +15,6 @@ jQuery(document).ready(function () {
     //過去の座標
     positioned,
 
-    //
     drawing,
     selecting,
     buffering,
@@ -40,8 +39,6 @@ jQuery(document).ready(function () {
 
     colorselector,
     brushselector;
-
-
 
     // 溜まったバッファを送信
     var emit = function () {
@@ -77,39 +74,27 @@ jQuery(document).ready(function () {
         };
 
         var paintStamp = function () {
-            var stampSize,
-                stampPosition,
-
-                stampData, //スタンプキャンバスのデータ
-                maincvsData, //メインキャンバスに描画するデータ
-
-                stamp_r, //スタンプの色
-                stamp_g,
-                stamp_b,
-
-                alpha; //スタンプの透明度
-
-            mainctx.fillStyle = points.c;
-
-            stampSize = {
+            var stampSize = {
                 x: Math.round(imgarr[points.img].width * (0.5 + points.w / 10)),
                 y: Math.round(imgarr[points.img].height * (0.5 + points.w / 10)),
             };
 
-            stampPosition = {
+            var stampPosition = {
                 x: Math.round(points.x - stampSize.x / 2),
                 y: Math.round(points.y - stampSize.y / 2),
             };
 
             stampctx.clearRect(0, 0, stampcvs.width, stampcvs.height);
             stampctx.drawImage(imgarr[points.img], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
-            stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
-            maincvsData = mainctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
+            var stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
+            var maincvsData = mainctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
-            stamp_r = parseInt(mainctx.fillStyle.substring(1, 3), 16);
-            stamp_g = parseInt(mainctx.fillStyle.substring(3, 5), 16);
-            stamp_b = parseInt(mainctx.fillStyle.substring(5, 7), 16);
+            mainctx.fillStyle = points.c;
+            var stamp_r = parseInt(mainctx.fillStyle.substring(1, 3), 16);
+            var stamp_g = parseInt(mainctx.fillStyle.substring(3, 5), 16);
+            var stamp_b = parseInt(mainctx.fillStyle.substring(5, 7), 16);
 
+            var alpha;
             for (var i in stampData.data) {
                 if (i % 4 == 3 && stampData.data[i] > 0) {
                     alpha = stampData.data[i] / 255;
@@ -181,9 +166,7 @@ jQuery(document).ready(function () {
             emit();
         } else if (!buffering) {
             buffering = true;
-            setTimeout(function () {
-                emit();
-            }, 500);
+            setTimeout(function () { emit(); }, 500);
         }
     };
 
@@ -204,13 +187,13 @@ jQuery(document).ready(function () {
     var drawLine = function (event, color) {
         var positions = position(event);
         var points = {
-            s: 'line',
-            x: positions.x,
-            y: positions.y,
+            s:  'line',
+            x:  positions.x,
+            y:  positions.y,
             xp: positioning.x,
             yp: positioning.y,
             w:  brushsize,
-            c: color,
+            c:  color,
         };
         buffer(points);
         paint({
@@ -226,11 +209,11 @@ jQuery(document).ready(function () {
     var drawStamp = function (event, img, color) {
         positioning = position(event);
         var points = {
-            s: 'stamp',
-            x: positioning.x,
-            y: positioning.y,
-            w: brushsize,
-            c: color,
+            s:   'stamp',
+            x:   positioning.x,
+            y:   positioning.y,
+            w:   brushsize,
+            c:   color,
             img: img,
         };
         buffer(points);
@@ -249,7 +232,6 @@ jQuery(document).ready(function () {
                 mousectx.arc(positions.x, positions.y, brushsize / 2, 0, Math.PI * 2, true);
                 mousectx.fill();
 
-                // 直線表示
                 if (shiftdown) displayShiftLine();
                 break;
 
@@ -262,35 +244,27 @@ jQuery(document).ready(function () {
                 mousectx.stroke();
                 mousectx.fill();
 
-                // 直線表示
                 if (shiftdown) displayShiftLine();
                 break;
 
             case 'gnh':
-                var stampSize,
-                stampPosition,
-                stampData,
-                stamp_r,
-                stamp_g,
-                stamp_b;
-
-                mousectx.fillStyle = getSelectedColor();
-                stampSize = {
+                var stampSize = {
                     x : Math.round(imgarr['gnh'].width * (0.5 + brushsize / 10)),
                     y : Math.round(imgarr['gnh'].height * (0.5 + brushsize / 10)),
                 };
-                stampPosition = {
+                var stampPosition = {
                     x : Math.round(positions.x - stampSize.x / 2),
                     y : Math.round(positions.y - stampSize.y / 2),
                 };
                 stampctx.clearRect(0, 0, stampcvs.width, stampcvs.height);
                 stampctx.drawImage(imgarr['gnh'], stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
-                stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
+                var stampData = stampctx.getImageData(stampPosition.x, stampPosition.y, stampSize.x, stampSize.y);
 
-                stamp_r = parseInt(mousectx.fillStyle.substring(1, 3), 16);
-                stamp_g = parseInt(mousectx.fillStyle.substring(3, 5), 16);
-                stamp_b = parseInt(mousectx.fillStyle.substring(5, 7), 16);
+                mousectx.fillStyle = getSelectedColor();
+                var stamp_r = parseInt(mousectx.fillStyle.substring(1, 3), 16);
+                var stamp_g = parseInt(mousectx.fillStyle.substring(3, 5), 16);
+                var stamp_b = parseInt(mousectx.fillStyle.substring(5, 7), 16);
                 for (var i in stampData.data) {
                     if (i % 4 == 3 && stampData.data[i] > 0) {
                         stampData.data[i - 3] = stamp_r;
@@ -332,9 +306,9 @@ jQuery(document).ready(function () {
         switch (brushstyle) {
             case 'pen':
                 if (shiftdown) {
-                    drawLine(event,getSelectedColor());
+                    drawLine(event, getSelectedColor());
                 } else {
-                    drawArc(event,getSelectedColor());
+                    drawArc(event, getSelectedColor());
                 }
                 break;
 
@@ -347,7 +321,7 @@ jQuery(document).ready(function () {
                 break;
 
             case 'gnh':
-                drawStamp(event,brushstyle,getSelectedColor());
+                drawStamp(event, brushstyle, getSelectedColor());
                 break;
 
             case 'spuit':
@@ -360,12 +334,12 @@ jQuery(document).ready(function () {
                     hex += toDoubleDigits16(imgdata.data[i].toString(16));
                 }
 
-                var cs = jQuery('#cs');
+                var cs = $('#cs');
                 cs.ColorPickerSetColor('#' + hex);
                 cs.css('backgroundColor', '#' + hex);
                 cs.val('#' + hex);
 
-                if (jQuery('.colorpicker_hsb_b').children('input')[0].value < 80) {
+                if ($('.colorpicker_hsb_b').children('input')[0].value < 80) {
                     cs.css('color','#ffffff');
                 } else {
                     cs.css('color','#000000');
@@ -401,12 +375,12 @@ jQuery(document).ready(function () {
 
     var onMouseOut = function (event) {
         event.stopPropagation();
-        mouseout=true;
+        mouseout = true;
         if (drawing == true) {
             drawing = false;
             positioning = position(event);
             if (brushstyle == 'pen') {
-                drawLine(event,cs.style.backgroundColor);
+                drawLine(event, getSelectedColor());
             } else if (brushstyle == 'eraser') {
                 drawLine(event,'white');
             }
@@ -417,21 +391,6 @@ jQuery(document).ready(function () {
     var onMouseOver = function (event) {
         event.stopPropagation();
         mouseout = false;
-        if (drawing == true) {
-            if (browser.indexOf("Chrome") != -1) {
-                if (Event.isLeftClick(event)) {
-                    if (brushstyle == 'pen') {
-                        drawArc(event,cs.style.backgroundColor);
-                    } else if (brushstyle == 'eraser') {
-                        drawArc(event,'white');
-                    }
-                } else {
-                    drawing = false;
-                }
-            } else {
-                drawing = false;
-            }
-        }
         mousectx.clearRect(0, 0, mousecvs.width, mousecvs.height);
     };
 
@@ -514,10 +473,10 @@ jQuery(document).ready(function () {
         imgarr = { 'gnh': new Image() };
         imgarr['gnh'].src = '/images/hibiki.png';
 
-        stampcvs = jQuery('#p0')[0];
+        stampcvs = $('#p0')[0];
         stampctx = stampcvs.getContext('2d');
 
-        maincvs = jQuery('#p1')[0];
+        maincvs = $('#p1')[0];
         mainctx = maincvs.getContext('2d');
         mainctx.fillStyle = 'white';
         mainctx.fillRect(0, 0, maincvs.width, maincvs.height);
@@ -526,30 +485,30 @@ jQuery(document).ready(function () {
         mainctx.fillStyle = 'black';
         mainctx.strokeStyle = 'black';
 
-        mousecvs = jQuery('#p2')[0];
+        mousecvs = $('#p2')[0];
         mousectx = mousecvs.getContext('2d');
         mousectx.lineCap ='round';
 
-        colorselector = jQuery('#cs')[0];
-        jQuery('#cs').ColorPicker({
+        colorselector = $('#cs')[0];
+        $('#cs').ColorPicker({
             color: '#000000',
             onChange: function (hsb, hex, rgb) {
-                jQuery('#cs').css('backgroundColor', '#' + hex);
-                jQuery('#cs').val('#' + hex);
+                $('#cs').css('backgroundColor', '#' + hex);
+                $('#cs').val('#' + hex);
                 if (hsb.b < 80) {
-                    jQuery('#cs').css('color','#ffffff');
+                    $('#cs').css('color','#ffffff');
                 } else {
-                    jQuery('#cs').css('color','#000000');
+                    $('#cs').css('color','#000000');
                 }
             }
         });
 
-        brushselector = jQuery('#brushgroup')[0];
+        brushselector = $('#brushgroup')[0];
         brushselector.onchange = function (event) {
-            brushstyle = jQuery("#brushgroup input[name='bg']:checked").val();
+            brushstyle = $("#brushgroup input[name='bg']:checked").val();
         };
 
-        jQuery('#brushsize').slider({
+        $('#brushsize').slider({
             value: 4,
             min:   1,
             max:   20,
@@ -566,9 +525,9 @@ jQuery(document).ready(function () {
         mousecvs.onmouseup = onMouseUp;
         document.onkeydown = onKeyDown;
         document.onkeyup = onKeyUp;
-        jQuery('#save').click(onSaveClick);
-        jQuery('#log').click(onLogClick);
-        jQuery('#clear').click(onClearClick);
+        $('#save').click(onSaveClick);
+        $('#log').click(onLogClick);
+        $('#clear').click(onClearClick);
     };
 
     init();
