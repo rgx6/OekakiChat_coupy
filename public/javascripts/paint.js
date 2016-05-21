@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    var DEFAULT_BRUSH_SIZE = 4;
+
     //未送信バッファ
     var bufpts = [];
     //スタンプ画像リスト
@@ -39,6 +41,10 @@ $(document).ready(function () {
 
     colorselector,
     brushselector;
+
+    var brushSizePen    = DEFAULT_BRUSH_SIZE;
+    var brushSizeEraser = DEFAULT_BRUSH_SIZE;
+    var brushSizeStamp  = DEFAULT_BRUSH_SIZE;
 
     // 溜まったバッファを送信
     var emit = function () {
@@ -299,6 +305,7 @@ $(document).ready(function () {
     };
 
     // イベント
+
     var onMouseDown = function (event) {
         event.stopPropagation();
         drawing = true;
@@ -450,7 +457,7 @@ $(document).ready(function () {
 
     // 初期化
     var init = function () {
-        brushsize = 4;
+        brushsize = DEFAULT_BRUSH_SIZE;
         mycolor = '#000000';
         brushstyle = 'pen';
         positioning = null;
@@ -502,11 +509,32 @@ $(document).ready(function () {
                 }
             }
         });
-
         brushselector = $('#brushgroup')[0];
         brushselector.onchange = function (event) {
             brushstyle = $("#brushgroup input[name='bg']:checked").val();
+
+            switch (brushstyle) {
+                case 'pen':
+                    brushsize = brushSizePen;
+                    $('#brushsize').slider('enable');
+                    break;
+                case 'eraser':
+                    brushsize = brushSizeEraser;
+                    $('#brushsize').slider('enable');
+                    break;
+                case 'spuit':
+                    $('#brushsize').slider('disable');
+                    break;
+                case 'gnh':
+                    brushsize = brushSizeStamp;
+                    $('#brushsize').slider('enable');
+                    break;
+            }
+
+            $('#brushsize').slider('value', brushsize);
         };
+        // ブラウザによってはreload時にradio buttonが初期化されないので対策
+        $('#brush1').prop('checked', true);
 
         $('#brushsize').slider({
             value: 4,
@@ -514,6 +542,18 @@ $(document).ready(function () {
             max:   20,
             slide: function (event, ui) {
                 brushsize = ui.value;
+
+                switch (brushstyle) {
+                    case 'pen':
+                        brushSizePen = brushsize;
+                        break;
+                    case 'eraser':
+                        brushSizeEraser = brushsize;
+                        break;
+                    case 'gnh':
+                        brushSizeStamp = brushsize;
+                        break;
+                }
             }
         });
 
