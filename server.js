@@ -77,10 +77,8 @@ var paint = io.of('/paint').on('connection', function (socket) {
 
     clientsuu += 1;
 
-    //全データ送信
-    if (points.length > 0) {
-        socket.json.emit('paint points', points);
-    }
+    // 全データ送信
+    socket.json.emit('paint points', points);
 
     socket.on('paint points', function (data) {
         'use strict';
